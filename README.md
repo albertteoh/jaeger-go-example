@@ -1,4 +1,4 @@
-# instrumented-ping-microservices
+# Jaeger Go Instrumentation Example
 Two simple Go microservices instrumented with Jaeger+OpenTracing
 
 # Getting Started
