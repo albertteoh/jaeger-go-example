@@ -1,9 +1,8 @@
 # Jaeger Go Instrumentation Example
-Two simple Go microservices instrumented with Jaeger+OpenTracing
+Two simple Go microservices, exposing `/ping` endpoints, instrumented with Jaeger+OpenTracing.
 
 # Getting Started
-Firstly, startup jaeger all-in-one; which brings up the
-entire Jaeger frontend and backend components.
+Firstly, startup jaeger all-in-one; which brings up the entire Jaeger frontend and backend components.
 
 ## Jaeger All-in-one
 ```
@@ -22,13 +21,13 @@ $ docker run -d --name jaeger \
 
 ## Start the services
 
-In one terminal
+In one terminal:
 
 ```
 $ go run ./service-a/service-a.go
 ```
 
-In a second terminal
+In a second terminal:
 
 ```
 $ go run ./service-b/service-b.go
@@ -36,8 +35,14 @@ $ go run ./service-b/service-b.go
 
 ## Run the example
 
-In a third terminal
+In a third terminal:
 
 ```
 $ curl http://localhost:8081/ping
 ```
+
+## Validate
+
+Should see `service-a -> service-b` on STDOUT.
+
+Go to http://localhost:16686/ and select `service-a` from the "Service" dropdown and click the "Find Traces" button.
