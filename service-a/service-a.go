@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"ping/lib/ping"
 	"ping/lib/tracing"
@@ -19,12 +20,17 @@ func main() {
 	defer closer.Close()
 	opentracing.SetGlobalTracer(tracer)
 
+	outboundHostPort, ok := os.LookupEnv("OUTBOUND_HOST_PORT")
+	if !ok {
+		outboundHostPort = "localhost:8082"
+	}
+
 	http.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
 		span := tracing.StartSpanFromRequest(tracer, r)
 		defer span.Finish()
 
 		ctx := opentracing.ContextWithSpan(context.Background(), span)
-		response, err := ping.Ping(ctx, "localhost:8082")
+		response, err := ping.Ping(ctx, outboundHostPort)
 		if err != nil {
 			log.Fatalf("Error occurred: %s", err)
 		}
