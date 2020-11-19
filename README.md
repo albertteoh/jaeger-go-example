@@ -1,5 +1,5 @@
 # Jaeger Go Instrumentation Example
-Two simple Go microservices, exposing `/ping` endpoints, instrumented with Jaeger+OpenTracing.
+Two simple Go microservices where `service-a` calls `service-b`. Both services expose a `/ping` endpoint, instrumented with Jaeger+OpenTracing.
 
 # Getting Started
 
