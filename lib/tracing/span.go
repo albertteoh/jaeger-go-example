@@ -1,9 +1,10 @@
 package tracing
 
 import (
+	"net/http"
+
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
-	"net/http"
 )
 
 // StartSpanFromRequest extracts the parent span context from the inbound HTTP request

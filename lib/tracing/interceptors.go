@@ -1,8 +1,9 @@
 package tracing
 
 import (
-	"github.com/opentracing/opentracing-go"
 	"net/http"
+
+	"github.com/opentracing/opentracing-go"
 )
 
 // Inject injects the outbound HTTP request with the given span's context to ensure
@@ -21,4 +22,3 @@ func Extract(tracer opentracing.Tracer, r *http.Request) (opentracing.SpanContex
 		opentracing.HTTPHeaders,
 		opentracing.HTTPHeadersCarrier(r.Header))
 }
-
