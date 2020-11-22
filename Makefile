@@ -1,4 +1,4 @@
-all: service-a service-b start
+all: start
 
 .PHONY: service-a
 service-a:
@@ -9,9 +9,10 @@ service-b:
 	@docker build -t service-b -f service-b/Dockerfile .
 
 .PHONY: start
-start:
+start: service-a service-b
 	@docker-compose up -d
 
 .PHONY: stop
 stop:
 	@docker-compose down
+	docker rmi service-a service-b
