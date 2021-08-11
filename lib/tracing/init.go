@@ -11,19 +11,9 @@ import (
 
 // Init returns an instance of Jaeger Tracer.
 func Init(service string) (opentracing.Tracer, io.Closer) {
-	cfg := &config.Configuration{
-		ServiceName: service,
-
-		// "const" sampler is a binary sampling strategy: 0=never sample, 1=always sample.
-		Sampler: &config.SamplerConfig{
-			Type:  "const",
-			Param: 1,
-		},
-
-		// Log the emitted spans to stdout.
-		Reporter: &config.ReporterConfig{
-			LogSpans: true,
-		},
+	cfg, err := config.FromEnv()
+	if err != nil {
+		panic(fmt.Sprintf("ERROR: failed to read config from env vars: %v\n", err))
 	}
 	tracer, closer, err := cfg.NewTracer(config.Logger(jaeger.StdLogger))
 	if err != nil {

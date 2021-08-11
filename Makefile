@@ -10,7 +10,7 @@ service-b:
 
 .PHONY: start
 start: service-a service-b
-	@docker-compose up -d
+	@docker-compose up -d --remove-orphans
 
 .PHONY: stop
 stop:
