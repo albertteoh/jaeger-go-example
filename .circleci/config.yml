@@ -17,3 +17,9 @@ jobs:
           name: Build service-b
           command: docker build -t service-b -f service-b/Dockerfile .
 
+  lint:
+    docker:
+      - image: golangci/golangci-lint:v1.42-alpine
+    steps:
+      - checkout
+      - run: golangci-lint run
