@@ -13,4 +13,7 @@ jobs:
       - run:
           name: Build service-a
           command: docker build -t service-a -f service-a/Dockerfile .
- 
+      - run:
+          name: Build service-b
+          command: docker build -t service-b -f service-b/Dockerfile .
+
