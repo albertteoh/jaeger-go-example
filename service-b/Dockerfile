@@ -1,10 +1,8 @@
-# build stage
+ARG port=8082
+ARG app=service-b
+
 FROM golang as builder
-
-ENV GO111MODULE=on
-ENV PORT 8082
-ENV APP service-b
-
+ARG app
 WORKDIR /app
 
 COPY go.mod .
@@ -12,14 +10,16 @@ COPY go.sum .
 
 RUN go mod download
 
-COPY ${APP}/ ${APP}
+COPY ${app}/ ${app}
 COPY lib/ lib
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /out/${APP} ./${APP}
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /out/${app} ./${app}
 
 # final stage
 FROM scratch
-COPY --from=builder /out/${APP} /app/
+ARG app
+ARG port
+COPY --from=builder /out/${app} /app/
 
-EXPOSE ${PORT}
+EXPOSE ${port}
 ENTRYPOINT ["/app/service-b"]
