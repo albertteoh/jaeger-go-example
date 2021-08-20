@@ -11,6 +11,11 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Build service-a
-          command: docker build -t service-a -f service-a/Dockerfile .
+          name: Install tools
+          command: |
+            go install github.com/wadey/gocovmerge
+            go install golang.org/x/lint/golint
+            go install github.com/mjibson/esc
+            go install github.com/securego/gosec/cmd/gosec
+            go install honnef.co/go/tools/cmd/staticcheck
  
