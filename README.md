@@ -1,4 +1,5 @@
 # Jaeger Go Instrumentation Example
+
 Two simple Go microservices where `service-a` calls `service-b`. Both services expose a `/ping` endpoint, instrumented
 with the [OpenTelemetry SDK](https://github.com/open-telemetry/opentelemetry-go).
 
