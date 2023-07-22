@@ -14,7 +14,7 @@ make start
 ## Run the example
 
 Hit `service-a`'s endpoint to trigger the trace.
-```
+```shell
 curl -w '\n' http://localhost:8081/ping
 ```
 
@@ -28,6 +28,13 @@ Go to http://localhost:16686/ and select `service-a` from the "Service" dropdown
 
 Stop and remove containers.
 
-```
+```shell
 make stop
 ```
+
+## Linting
+
+```shell
+make lint
+```
+
