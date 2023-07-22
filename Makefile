@@ -1,3 +1,5 @@
+GO = go
+
 all: start
 
 .PHONY: start
@@ -12,3 +14,7 @@ stop:
 .PHONY: lint
 lint:
 	golangci-lint run
+
+.PHONY: install-tools
+install-tools:
+	$(GO) install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.53.3
