@@ -1,5 +1,7 @@
 # Jaeger Go Instrumentation Example
-Two simple Go microservices where `service-a` calls `service-b`. Both services expose a `/ping` endpoint, instrumented with Jaeger+OpenTracing.
+
+Two simple Go microservices where `service-a` calls `service-b`. Both services expose a `/ping` endpoint, instrumented
+with the [OpenTelemetry SDK](https://github.com/open-telemetry/opentelemetry-go).
 
 # Getting Started
 
@@ -7,14 +9,14 @@ Two simple Go microservices where `service-a` calls `service-b`. Both services e
 
 Starts up the Jaeger all-in-one container, along with our example microservices.
 ```
-$ make start
+make start
 ```
 
 ## Run the example
 
 Hit `service-a`'s endpoint to trigger the trace.
-```
-$ curl -w '\n' http://localhost:8081/ping
+```shell
+curl -w '\n' http://localhost:8081/ping
 ```
 
 ## Validate
@@ -27,6 +29,13 @@ Go to http://localhost:16686/ and select `service-a` from the "Service" dropdown
 
 Stop and remove containers.
 
+```shell
+make stop
 ```
-$ make stop
+
+## Linting
+
+```shell
+make lint
 ```
+

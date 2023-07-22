@@ -1,25 +1,28 @@
 version: '3'
 services:
   service-a:
-    image: service-a
+    build:
+      context: .
+      dockerfile: service-a/Dockerfile
     ports:
       - "8081:8081"
     environment:
       - OUTBOUND_HOST_PORT=service-b:8082
-      - JAEGER_SERVICE_NAME=service-a
-      - JAEGER_AGENT_HOST=jaeger
-      - JAEGER_SAMPLER_TYPE=const
-      - JAEGER_SAMPLER_PARAM=1
-      - JAEGER_REPORTER_LOG_SPANS=true
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      - OTEL_EXPORTER_OTLP_INSECURE=true
+
   service-b:
-    image: service-b
+    build:
+      context: .
+      dockerfile: service-b/Dockerfile
     environment:
-      - JAEGER_SERVICE_NAME=service-b
-      - JAEGER_AGENT_HOST=jaeger
-      - JAEGER_SAMPLER_TYPE=const
-      - JAEGER_SAMPLER_PARAM=1
-      - JAEGER_REPORTER_LOG_SPANS=true
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      - OTEL_EXPORTER_OTLP_INSECURE=true
+
   jaeger:
-    image: jaegertracing/all-in-one
+    image: jaegertracing/all-in-one:latest
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
     ports:
       - "16686:16686"
+      - "4318:4318"

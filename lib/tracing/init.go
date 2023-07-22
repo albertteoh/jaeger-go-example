@@ -1,23 +1,39 @@
 package tracing
 
 import (
-	"fmt"
-	"io"
+	"context"
+	"log"
 
-	"github.com/opentracing/opentracing-go"
-	"github.com/uber/jaeger-client-go"
-	"github.com/uber/jaeger-client-go/config"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
+	"go.opentelemetry.io/otel/sdk/resource"
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
+	semconv "go.opentelemetry.io/otel/semconv/v1.20.0"
+	"go.opentelemetry.io/otel/trace"
 )
 
 // Init returns an instance of Jaeger Tracer.
-func Init(service string) (opentracing.Tracer, io.Closer) {
-	cfg, err := config.FromEnv()
+func Init(ctx context.Context, service string) trace.Tracer {
+	client := otlptracegrpc.NewClient(
+		otlptracegrpc.WithInsecure(),
+	)
+	exporter, err := otlptrace.New(ctx, client)
 	if err != nil {
-		panic(fmt.Sprintf("ERROR: failed to read config from env vars: %v\n", err))
+		log.Fatal("creating OTLP trace exporter: %w", err)
 	}
-	tracer, closer, err := cfg.NewTracer(config.Logger(jaeger.StdLogger))
-	if err != nil {
-		panic(fmt.Sprintf("ERROR: cannot init Jaeger: %v\n", err))
-	}
-	return tracer, closer
+
+	tp := sdktrace.NewTracerProvider(
+		sdktrace.WithBatcher(exporter),
+		sdktrace.WithResource(newResource(service)),
+	)
+
+	return tp.Tracer(service)
+}
+
+func newResource(service string) *resource.Resource {
+	return resource.NewWithAttributes(
+		semconv.SchemaURL,
+		semconv.ServiceName(service),
+		semconv.ServiceVersion("0.0.1"),
+	)
 }

@@ -1,0 +1,11 @@
+run:
+  go: '1.20'
+
+linters:
+  enable-all: true
+  disable:
+    - ireturn
+    - gosec
+    - depguard
+    - gci
+    - wsl

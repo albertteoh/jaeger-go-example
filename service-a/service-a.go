@@ -7,34 +7,32 @@ import (
 	"net/http"
 	"os"
 
-	"ping/lib/ping"
-	"ping/lib/tracing"
-
-	"github.com/opentracing/opentracing-go"
+	"github.com/albertteoh/jaeger-go-example/lib/ping"
+	"github.com/albertteoh/jaeger-go-example/lib/tracing"
 )
 
 const thisServiceName = "service-a"
 
 func main() {
-	tracer, closer := tracing.Init(thisServiceName)
-	defer closer.Close()
-	opentracing.SetGlobalTracer(tracer)
+	ctx := context.Background()
+	tracer := tracing.Init(ctx, thisServiceName)
 
 	outboundHostPort, ok := os.LookupEnv("OUTBOUND_HOST_PORT")
 	if !ok {
 		outboundHostPort = "localhost:8082"
 	}
 
-	http.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
-		span := tracing.StartSpanFromRequest(tracer, r)
-		defer span.Finish()
+	http.HandleFunc("/ping", func(writer http.ResponseWriter, r *http.Request) {
+		ctx, span := tracer.Start(r.Context(), "/ping")
+		defer span.End()
 
-		ctx := opentracing.ContextWithSpan(context.Background(), span)
-		response, err := ping.Ping(ctx, outboundHostPort)
+		response, err := ping.Ping(ctx, outboundHostPort, tracer)
 		if err != nil {
-			log.Fatalf("Error occurred: %s", err)
+			log.Fatalf("Error occurred on ping: %s", err)
 		}
-		w.Write([]byte(fmt.Sprintf("%s -> %s", thisServiceName, response)))
+		if _, err = writer.Write([]byte(fmt.Sprintf("%s -> %s", thisServiceName, response))); err != nil {
+			log.Fatalf("Error occurred on write: %s", err)
+		}
 	})
 	log.Printf("Listening on localhost:8081")
 	log.Fatal(http.ListenAndServe(":8081", nil))
