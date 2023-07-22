@@ -8,7 +8,7 @@ import (
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/trace"
 
-	libhttp "ping/lib/http"
+	libhttp "github.com/albertteoh/jaeger-go-example/lib/http"
 )
 
 // Ping sends a ping request to the given hostPort, ensuring a new span is created
@@ -20,7 +20,6 @@ func Ping(ctx context.Context, hostPort string, tracer trace.Tracer) (string, er
 
 	url := fmt.Sprintf("http://%s/ping", hostPort)
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
-
 	if err != nil {
 		return "", fmt.Errorf("failed GET request to %s: %w", url, err)
 	}

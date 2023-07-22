@@ -7,9 +7,7 @@ import (
 	"net/http"
 )
 
-var (
-	statusNotOKErr = errors.New("error response on HTTP request")
-)
+var errStatusNotOK = errors.New("error response on HTTP request")
 
 // Do executes an HTTP request and returns the response body as a string.
 // Non-200 response codes will be returned as an error with the response body.
@@ -26,7 +24,8 @@ func Do(req *http.Request) (string, error) {
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("StatusCode: %d, Body: %s: %w", resp.StatusCode, body, statusNotOKErr)
+		return "", fmt.Errorf("StatusCode: %d, Body: %s: %w", resp.StatusCode, body, errStatusNotOK)
 	}
+
 	return string(body), nil
 }

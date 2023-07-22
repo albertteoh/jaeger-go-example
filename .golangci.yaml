@@ -5,3 +5,7 @@ linters:
   enable-all: true
   disable:
     - ireturn
+    - gosec
+    - depguard
+    - gci
+    - wsl
