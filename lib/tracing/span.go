@@ -1,15 +1,17 @@
 package tracing
 
 import (
+	"context"
 	"net/http"
 
-	"github.com/opentracing/opentracing-go"
-	"github.com/opentracing/opentracing-go/ext"
+	"go.opentelemetry.io/otel/propagation"
+	"go.opentelemetry.io/otel/trace"
 )
 
 // StartSpanFromRequest extracts the parent span context from the inbound HTTP request
 // and starts a new child span if there is a parent span.
-func StartSpanFromRequest(tracer opentracing.Tracer, r *http.Request) opentracing.Span {
-	spanCtx, _ := Extract(tracer, r)
-	return tracer.StartSpan("ping-receive", ext.RPCServerOption(spanCtx))
+func StartSpanFromRequest(r *http.Request, tracer trace.Tracer) (context.Context, trace.Span) {
+	p := propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{})
+	ctx := p.Extract(r.Context(), propagation.HeaderCarrier(r.Header))
+	return tracer.Start(ctx, "ping-receive")
 }
