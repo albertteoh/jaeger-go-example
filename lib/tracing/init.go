@@ -18,6 +18,7 @@ func Init(ctx context.Context, service string) trace.Tracer {
 		otlptracegrpc.WithInsecure(),
 	)
 	exporter, err := otlptrace.New(ctx, client)
+
 	if err != nil {
 		log.Fatal("creating OTLP trace exporter: %w", err)
 	}
@@ -26,6 +27,7 @@ func Init(ctx context.Context, service string) trace.Tracer {
 		sdktrace.WithBatcher(exporter),
 		sdktrace.WithResource(newResource(service)),
 	)
+
 	return tp.Tracer(service)
 }
 

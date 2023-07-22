@@ -8,3 +8,7 @@ start: service-a service-b
 stop:
 	@docker compose down
 	docker rmi service-a service-b
+
+.PHONY: lint
+lint:
+	golangci-lint run

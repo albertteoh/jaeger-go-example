@@ -1,4 +1,4 @@
-module ping
+module "github.com/albertteoh/jaeger-go-example"
 
 go 1.20
 

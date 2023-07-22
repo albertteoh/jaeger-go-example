@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"os"
 
-	"ping/lib/ping"
-	"ping/lib/tracing"
+	"github.com/albertteoh/jaeger-go-example/lib/ping"
+	"github.com/albertteoh/jaeger-go-example/lib/tracing"
 )
 
 const thisServiceName = "service-a"
@@ -22,7 +22,7 @@ func main() {
 		outboundHostPort = "localhost:8082"
 	}
 
-	http.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/ping", func(writer http.ResponseWriter, r *http.Request) {
 		ctx, span := tracer.Start(r.Context(), "/ping")
 		defer span.End()
 
@@ -30,7 +30,7 @@ func main() {
 		if err != nil {
 			log.Fatalf("Error occurred on ping: %s", err)
 		}
-		if _, err = w.Write([]byte(fmt.Sprintf("%s -> %s", thisServiceName, response))); err != nil {
+		if _, err = writer.Write([]byte(fmt.Sprintf("%s -> %s", thisServiceName, response))); err != nil {
 			log.Fatalf("Error occurred on write: %s", err)
 		}
 	})

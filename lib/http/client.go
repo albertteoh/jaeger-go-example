@@ -1,9 +1,14 @@
 package xhttp
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
+)
+
+var (
+	statusNotOKErr = errors.New("error response on HTTP request")
 )
 
 // Do executes an HTTP request and returns the response body as a string.
@@ -11,17 +16,17 @@ import (
 func Do(req *http.Request) (string, error) {
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed http request: %w", err)
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to read response body: %w", err)
 	}
 
-	if resp.StatusCode != 200 {
-		return "", fmt.Errorf("StatusCode: %d, Body: %s", resp.StatusCode, body)
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("StatusCode: %d, Body: %s: %w", resp.StatusCode, body, statusNotOKErr)
 	}
 	return string(body), nil
 }

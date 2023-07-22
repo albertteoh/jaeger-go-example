@@ -2,13 +2,12 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 
 	"go.opentelemetry.io/otel/propagation"
 
-	"ping/lib/tracing"
+	"github.com/albertteoh/jaeger-go-example/lib/tracing"
 )
 
 const thisServiceName = "service-b"
@@ -17,16 +16,14 @@ func main() {
 	ctx := context.Background()
 	tracer := tracing.Init(ctx, thisServiceName)
 
-	http.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Printf("DEBUG: http req=%+v\n", r)
-
+	http.HandleFunc("/ping", func(writer http.ResponseWriter, r *http.Request) {
 		p := propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{})
 		ctx = p.Extract(r.Context(), propagation.HeaderCarrier(r.Header))
 
 		_, span := tracer.Start(ctx, "ping-receive")
 		defer span.End()
 
-		if _, err := w.Write([]byte(fmt.Sprintf("%s", thisServiceName))); err != nil {
+		if _, err := writer.Write([]byte(thisServiceName)); err != nil {
 			log.Fatalf("Error occurred on write: %s", err)
 		}
 	})

@@ -19,16 +19,20 @@ func Ping(ctx context.Context, hostPort string, tracer trace.Tracer) (string, er
 	defer span.End()
 
 	url := fmt.Sprintf("http://%s/ping", hostPort)
-	req, err := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed GET request to %s: %w", url, err)
 	}
 
 	propagator := propagation.TraceContext{}
-	fmt.Printf("DEBUG: propagator=%+v\n", propagator)
 
 	propagator.Inject(ctx, propagation.HeaderCarrier(req.Header))
 
-	fmt.Printf("DEBUG: http req=%+v\n", req)
-	return libhttp.Do(req)
+	respBody, err := libhttp.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("failed http request: %w", err)
+	}
+
+	return respBody, nil
 }

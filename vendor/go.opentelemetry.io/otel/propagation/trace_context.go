@@ -46,14 +46,11 @@ var traceCtxRegExp = regexp.MustCompile("^(?P<version>[0-9a-f]{2})-(?P<traceID>[
 // Inject set tracecontext from the Context into the carrier.
 func (tc TraceContext) Inject(ctx context.Context, carrier TextMapCarrier) {
 	sc := trace.SpanContextFromContext(ctx)
-	fmt.Printf("DEBUG: isvalid=%t\n", sc.IsValid())
 	if !sc.IsValid() {
 		return
 	}
 
-	fmt.Printf("DEBUG: trace state=%s\n", sc.TraceState())
 	if ts := sc.TraceState().String(); ts != "" {
-		fmt.Printf("DEBUG: setting carrier trace state header %s\n", tracestateHeader)
 		carrier.Set(tracestateHeader, ts)
 	}
 
@@ -65,7 +62,6 @@ func (tc TraceContext) Inject(ctx context.Context, carrier TextMapCarrier) {
 		sc.TraceID(),
 		sc.SpanID(),
 		flags)
-	fmt.Printf("DEBUG: setting carrier trace state parent %s\n", traceparentHeader)
 	carrier.Set(traceparentHeader, h)
 }
 
